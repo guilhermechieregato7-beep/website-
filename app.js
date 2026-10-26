@@ -1,5 +1,5 @@
 
-const WHATSAPP_NUMBER = ""; // Ex.: 5516999999999
+const WHATSAPP_NUMBER = ""; // Ex.: 5516999957070
 
 const products = [
   {
