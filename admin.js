@@ -814,4 +814,6 @@ db.auth.onAuthStateChange((event, session) => {
 ensureProductTools();
 
 verifyAdmin().catch(error => {
-  console.error("Falha
+  console.error("Falha ao inicializar o painel:", error);
+  message(formatError(error), "error");
+});
