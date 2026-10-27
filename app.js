@@ -274,10 +274,16 @@ loadProducts();
 
 
 
+
 (() => {
   const root = document.documentElement;
   const button = document.getElementById("publicThemeToggle");
   const storageKey = "vitrine.public.theme.v1";
+
+  if (!button) {
+    console.error("Botão de tema não encontrado: publicThemeToggle");
+    return;
+  }
 
   let theme = "light";
 
@@ -294,15 +300,13 @@ loadProducts();
   function applyTheme() {
     root.dataset.publicTheme = theme;
 
-    if (button) {
-      button.textContent = theme === "dark" ? "☀️" : "🌙";
-      button.setAttribute(
-        "aria-label",
-        theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"
-      );
-      button.title =
-        theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro";
-    }
+    button.textContent = theme === "dark" ? "☀️" : "🌙";
+    button.setAttribute(
+      "aria-label",
+      theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"
+    );
+    button.title =
+      theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro";
 
     const metaTheme = document.querySelector('meta[name="theme-color"]');
 
@@ -311,7 +315,7 @@ loadProducts();
     }
   }
 
-  button?.addEventListener("click", () => {
+  button.addEventListener("click", () => {
     theme = theme === "dark" ? "light" : "dark";
     applyTheme();
 
@@ -324,4 +328,5 @@ loadProducts();
 
   applyTheme();
 })();
+
 
