@@ -359,6 +359,132 @@
       .form-actions { grid-template-columns: 1fr; }
       .toolbar { flex-wrap: wrap; }
     }
+
+
+:root[data-admin-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111019;
+  --surface: #1b1924;
+  --text: #f3eff8;
+  --muted: #aaa2b5;
+  --border: #373140;
+  --primary-dark: #c4a7ff;
+  --primary-soft: #30243f;
+  --danger: #ff8298;
+  --success: #62d7a0;
+  --shadow: 0 8px 28px #0003;
+}
+
+:root[data-admin-theme="dark"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+:root[data-admin-theme="dark"] .panel,
+:root[data-admin-theme="dark"] .notice,
+:root[data-admin-theme="dark"] .button.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+:root[data-admin-theme="dark"] input,
+:root[data-admin-theme="dark"] textarea,
+:root[data-admin-theme="dark"] select {
+  background: #24212e;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+:root[data-admin-theme="dark"] .file-field {
+  background: #211d2b;
+  border-color: var(--border);
+}
+
+:root[data-admin-theme="dark"] .button.danger {
+  background: #3c202b;
+  color: #ffb4c1;
+  border-color: #60303e;
+}
+
+.admin-appearance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-accent {
+  width: auto;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+:root[data-accent="green"] {
+  --primary: #34805d;
+  --primary-dark: #246344;
+  --primary-soft: #e3f4e9;
+}
+
+:root[data-accent="blue"] {
+  --primary: #386dc0;
+  --primary-dark: #28549b;
+  --primary-soft: #e5edff;
+}
+
+:root[data-accent="rose"] {
+  --primary: #bd5279;
+  --primary-dark: #963a5c;
+  --primary-soft: #fae5ee;
+}
+
+:root[data-accent="orange"] {
+  --primary: #b96524;
+  --primary-dark: #914818;
+  --primary-soft: #faeadb;
+}
+
+:root[data-admin-theme="dark"][data-accent="green"] {
+  --primary: #64d69a;
+  --primary-dark: #a2f0c0;
+  --primary-soft: #1e392b;
+}
+
+:root[data-admin-theme="dark"][data-accent="blue"] {
+  --primary: #78aaff;
+  --primary-dark: #a7c6ff;
+  --primary-soft: #202f49;
+}
+
+:root[data-admin-theme="dark"][data-accent="rose"] {
+  --primary: #ff8db6;
+  --primary-dark: #ffb2cc;
+  --primary-soft: #402432;
+}
+
+:root[data-admin-theme="dark"][data-accent="orange"] {
+  --primary: #ffad70;
+  --primary-dark: #ffd0a5;
+  --primary-soft: #402c20;
+}
+
+@media (max-width: 520px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+
+  .admin-appearance {
+    width: 100%;
+  }
+
+  .admin-appearance > * {
+    flex: 1;
+  }
+
+  .admin-accent {
+    min-width: 0;
+  }
+}
   </style>
 </head>
 
