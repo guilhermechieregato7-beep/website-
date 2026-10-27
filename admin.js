@@ -817,3 +817,64 @@ verifyAdmin().catch(error => {
   console.error("Falha ao inicializar o painel:", error);
   message(formatError(error), "error");
 });
+
+
+
+(() => {
+  const root = document.documentElement;
+  const themeButton = document.getElementById("adminThemeToggle");
+  const accentSelect = document.getElementById("adminAccent");
+  const storageKey = "vitrine.admin.appearance.v1";
+
+  const defaults = {
+    theme: "light",
+    accent: "purple"
+  };
+
+  let settings = { ...defaults };
+
+  try {
+    settings = {
+      ...defaults,
+      ...JSON.parse(localStorage.getItem(storageKey) || "{}")
+    };
+  } catch {
+    settings = { ...defaults };
+  }
+
+  function apply() {
+    root.dataset.adminTheme = settings.theme;
+    root.dataset.accent = settings.accent;
+
+    if (themeButton) {
+      themeButton.textContent =
+        settings.theme === "dark" ? "☀️ Tema" : "🌙 Tema";
+    }
+
+    if (accentSelect) {
+      accentSelect.value = settings.accent;
+    }
+  }
+
+  function save() {
+    apply();
+
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(settings));
+    } catch {
+      console.warn("Não foi possível salvar as preferências visuais.");
+    }
+  }
+
+  themeButton?.addEventListener("click", () => {
+    settings.theme = settings.theme === "dark" ? "light" : "dark";
+    save();
+  });
+
+  accentSelect?.addEventListener("change", event => {
+    settings.accent = event.target.value;
+    save();
+  });
+
+  apply();
+})();
