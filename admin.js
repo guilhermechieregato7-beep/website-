@@ -36,6 +36,11 @@ const ALLOWED_IMAGE_TYPES = [
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
+// Compressão de imagem no navegador, antes do upload.
+const MAX_IMAGE_DIMENSION = 1600; // maior lado da imagem, em pixels
+const IMAGE_COMPRESSION_QUALITY = 0.82;
+const SKIP_COMPRESSION_UNDER = 300 * 1024; // arquivo já leve, não precisa comprimir
+
 let products = [];
 let currentRole = null;
 let busy = false;
@@ -478,6 +483,63 @@ function startEditing(product) {
 }
 
 // =====================================================
+// COMPRESSÃO DE IMAGEM (no navegador, antes do upload)
+// =====================================================
+
+// Reduz o tamanho do arquivo redimensionando para no máximo
+// MAX_IMAGE_DIMENSION px no maior lado e recomprimindo como JPEG.
+// Se qualquer etapa falhar, devolve o arquivo original sem travar o envio.
+async function compressImage(file) {
+  if (!file.type.startsWith("image/")) return file;
+  if (file.size <= SKIP_COMPRESSION_UNDER) return file;
+
+  let objectUrl;
+
+  try {
+    const img = await new Promise((resolve, reject) => {
+      objectUrl = URL.createObjectURL(file);
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error("Falha ao ler a imagem."));
+      element.src = objectUrl;
+    });
+
+    const largestSide = Math.max(img.naturalWidth, img.naturalHeight);
+    const scale = Math.min(1, MAX_IMAGE_DIMENSION / largestSide);
+
+    const targetWidth = Math.round(img.naturalWidth * scale) || img.naturalWidth;
+    const targetHeight = Math.round(img.naturalHeight * scale) || img.naturalHeight;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+
+    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, "image/jpeg", IMAGE_COMPRESSION_QUALITY)
+    );
+
+    // Só usa a versão comprimida se ela realmente ficou menor.
+    if (!blob || blob.size >= file.size) return file;
+
+    const newName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+    return new File([blob], newName, { type: "image/jpeg" });
+  } catch (error) {
+    console.warn(
+      "Não foi possível comprimir a imagem, enviando o arquivo original:",
+      error
+    );
+    return file;
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+  }
+}
+
+// =====================================================
 // ENVIO DE IMAGENS
 // =====================================================
 
@@ -498,18 +560,26 @@ async function uploadImage(file) {
     );
   }
 
+  const processedFile = await compressImage(file);
+
+  if (processedFile.size > MAX_IMAGE_SIZE) {
+    throw new Error(
+      "A imagem continua muito grande mesmo após a compressão. Tente uma foto menor."
+    );
+  }
+
   const extension = ({
     "image/jpeg": "jpg",
     "image/png": "png",
     "image/webp": "webp"
-  })[file.type];
+  })[processedFile.type] || "jpg";
 
   const path = `${crypto.randomUUID()}.${extension}`;
 
   const { error } = await db.storage
     .from("product-images")
-    .upload(path, file, {
-      contentType: file.type,
+    .upload(path, processedFile, {
+      contentType: processedFile.type,
       upsert: false
     });
 
