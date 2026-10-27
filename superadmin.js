@@ -1,20 +1,20 @@
 
 "use strict";
 
-// =====================================================
-// CONFIGURAÇÃO DO SUPABASE
-// =====================================================
-
 const SUPABASE_URL = "https://hyovvejtvzptzskxbkrr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_a0xRmApdgaH-KzxS2gh4KQ_wl1obK0z";
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
   }
-});
+);
 
 const $ = id => document.getElementById(id);
 
@@ -40,15 +40,13 @@ const defaults = {
 
 const preferenceKey = "vitrine.superadmin.appearance.v1";
 
-// =====================================================
-// PREFERÊNCIAS VISUAIS
-// =====================================================
-
 function readPrefs() {
   try {
     return {
       ...defaults,
-      ...JSON.parse(localStorage.getItem(preferenceKey) || "{}")
+      ...JSON.parse(
+        localStorage.getItem(preferenceKey) || "{}"
+      )
     };
   } catch {
     return { ...defaults };
@@ -57,62 +55,13 @@ function readPrefs() {
 
 let prefs = readPrefs();
 
-function applyPrefs() {
-  const effective = prefs.theme === "system"
-    ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
-    : prefs.theme;
-
-  document.documentElement.dataset.theme = effective;
-  document.documentElement.dataset.accent = prefs.accent;
-  document.documentElement.dataset.density = prefs.density;
-
-  if (prefs.accent === "custom") {
-    const color = prefs.customHex || defaults.customHex;
-
-    document.documentElement.style.setProperty("--accent", color);
-    document.documentElement.style.setProperty("--accent-strong", color);
-    document.documentElement.style.setProperty("--accent-soft", color + "22");
-  } else {
-    document.documentElement.style.removeProperty("--accent");
-    document.documentElement.style.removeProperty("--accent-strong");
-    document.documentElement.style.removeProperty("--accent-soft");
-  }
-
-  if ($("themeSelect")) $("themeSelect").value = prefs.theme;
-  if ($("densitySelect")) $("densitySelect").value = prefs.density;
-
-  document.querySelectorAll("#swatches [data-accent]").forEach(button => {
-    button.setAttribute(
-      "aria-pressed",
-      String(button.dataset.accent === prefs.accent)
-    );
-  });
-}
-
-function savePrefs() {
-  try {
-    localStorage.setItem(preferenceKey, JSON.stringify(prefs));
-    applyPrefs();
-
-    if ($("appearanceMessage")) {
-      $("appearanceMessage").textContent =
-        "Preferências salvas neste dispositivo.";
-    }
-  } catch {
-    message("Não foi possível salvar as preferências neste navegador.", "error");
-  }
-}
-
-// =====================================================
-// UTILITÁRIOS
-// =====================================================
-
 function message(text, kind = "info") {
   const el = $("notice");
   if (!el) return;
 
   el.textContent = text;
-  el.className = "notice" + (kind === "error" ? " error" : "");
+  el.className =
+    "notice" + (kind === "error" ? " error" : "");
 }
 
 function esc(value = "") {
@@ -142,16 +91,12 @@ function date(value) {
     : d.toLocaleString("pt-BR");
 }
 
-function status(value) {
-  return ({
+function productStatus(value) {
+  return {
     available: "Disponível",
     made_to_order: "Sob encomenda",
     sold_out: "Esgotado"
-  })[value] || value || "—";
-}
-
-function tableEmpty(colspan, text) {
-  return `<tr><td colspan="${colspan}" class="muted">${esc(text)}</td></tr>`;
+  }[value] || value || "—";
 }
 
 function checkRow(label, value, kind = "ok") {
@@ -163,9 +108,84 @@ function checkRow(label, value, kind = "ok") {
   `;
 }
 
-// =====================================================
-// NAVEGAÇÃO
-// =====================================================
+/* APARÊNCIA */
+
+function applyPrefs() {
+  const effective = prefs.theme === "system"
+    ? (
+        matchMedia("(prefers-color-scheme: light)")
+          .matches ? "light" : "dark"
+      )
+    : prefs.theme;
+
+  document.documentElement.dataset.theme = effective;
+  document.documentElement.dataset.accent = prefs.accent;
+  document.documentElement.dataset.density = prefs.density;
+
+  if (prefs.accent === "custom") {
+    const color = prefs.customHex || defaults.customHex;
+
+    document.documentElement.style.setProperty(
+      "--accent", color
+    );
+
+    document.documentElement.style.setProperty(
+      "--accent-strong", color
+    );
+
+    document.documentElement.style.setProperty(
+      "--accent-soft", color + "22"
+    );
+  } else {
+    document.documentElement.style.removeProperty("--accent");
+    document.documentElement.style.removeProperty("--accent-strong");
+    document.documentElement.style.removeProperty("--accent-soft");
+  }
+
+  if ($("themeSelect")) {
+    $("themeSelect").value = prefs.theme;
+  }
+
+  if ($("densitySelect")) {
+    $("densitySelect").value = prefs.density;
+  }
+
+  if ($("customAccent")) {
+    $("customAccent").value = prefs.customHex;
+  }
+
+  document.querySelectorAll(
+    "#swatches [data-accent]"
+  ).forEach(button => {
+    button.setAttribute(
+      "aria-pressed",
+      String(button.dataset.accent === prefs.accent)
+    );
+  });
+}
+
+function savePrefs() {
+  try {
+    localStorage.setItem(
+      preferenceKey,
+      JSON.stringify(prefs)
+    );
+
+    applyPrefs();
+
+    if ($("appearanceMessage")) {
+      $("appearanceMessage").textContent =
+        "Preferências salvas neste dispositivo.";
+    }
+  } catch {
+    message(
+      "Não foi possível salvar as preferências.",
+      "error"
+    );
+  }
+}
+
+/* NAVEGAÇÃO */
 
 function showPage(page) {
   if (!pageNames[page]) return;
@@ -174,15 +194,20 @@ function showPage(page) {
     el.classList.add("hidden");
   });
 
-  const target = $("page-" + page);
-  if (target) target.classList.remove("hidden");
+  $("page-" + page)?.classList.remove("hidden");
 
-  document.querySelectorAll(".nav-item[data-page]").forEach(el => {
-    el.classList.toggle("active", el.dataset.page === page);
+  document.querySelectorAll(
+    ".nav-item[data-page]"
+  ).forEach(el => {
+    el.classList.toggle(
+      "active",
+      el.dataset.page === page
+    );
   });
 
   $("pageTitle").textContent = pageNames[page][0];
   $("breadcrumb").textContent = pageNames[page][1];
+
   $("sidebar").classList.remove("open");
 
   location.hash = page;
@@ -190,11 +215,15 @@ function showPage(page) {
 
 function bindNavigation() {
   document.querySelectorAll("[data-page]").forEach(el => {
-    el.addEventListener("click", () => showPage(el.dataset.page));
+    el.addEventListener("click", () => {
+      showPage(el.dataset.page);
+    });
   });
 
   document.querySelectorAll("[data-goto]").forEach(el => {
-    el.addEventListener("click", () => showPage(el.dataset.goto));
+    el.addEventListener("click", () => {
+      showPage(el.dataset.goto);
+    });
   });
 
   $("menuToggle").addEventListener("click", () => {
@@ -202,17 +231,14 @@ function bindNavigation() {
   });
 }
 
-// =====================================================
-// AUTENTICAÇÃO E AUTORIZAÇÃO
-// =====================================================
+/* AUTENTICAÇÃO */
 
 async function verifySuperadmin() {
-  const { data: sessionData, error: sessionError } =
-    await db.auth.getSession();
+  const { data, error } = await db.auth.getSession();
 
-  if (sessionError) throw sessionError;
+  if (error) throw error;
 
-  const session = sessionData.session;
+  const session = data.session;
 
   if (!session) {
     $("loginScreen").classList.remove("hidden");
@@ -220,21 +246,25 @@ async function verifySuperadmin() {
     return false;
   }
 
-  const { data: userProfile, error } = await db
-    .from("profiles")
-    .select("id, display_name, role")
-    .eq("id", session.user.id)
-    .maybeSingle();
+  const { data: userProfile, error: profileError } =
+    await db
+      .from("profiles")
+      .select("id, display_name, role")
+      .eq("id", session.user.id)
+      .maybeSingle();
 
-  if (error || !userProfile || userProfile.role !== "superadmin") {
+  if (
+    profileError ||
+    !userProfile ||
+    userProfile.role !== "superadmin"
+  ) {
     await db.auth.signOut();
 
     $("loginScreen").classList.remove("hidden");
     $("app").classList.add("hidden");
 
     throw new Error(
-      "Acesso exclusivo para uma conta com perfil superadmin. " +
-      "A sessão foi encerrada."
+      "Acesso exclusivo para uma conta Superadmin."
     );
   }
 
@@ -254,30 +284,15 @@ async function verifySuperadmin() {
   return true;
 }
 
-// =====================================================
-// CATÁLOGO DE PRODUTOS
-// =====================================================
-
-function renderProducts() {
-  const filtered = getFilteredProducts();
-
-  $("productsTable").innerHTML = filtered.map(product => `
-    <tr>
-      <td>${esc(product.name)}</td>
-      <td>${esc(product.category)}</td>
-      <td>${price(product.price)}</td>
-      <td>${esc(status(product.status))}</td>
-      <td>${date(product.created_at)}</td>
-    </tr>
-  `).join("") || tableEmpty(5, "Nenhum produto corresponde ao filtro.");
-}
+/* PRODUTOS */
 
 function getFilteredProducts() {
   const query = ($("productSearch")?.value || "")
     .trim()
     .toLocaleLowerCase("pt-BR");
 
-  const selectedStatus = $("productStatus")?.value || "all";
+  const selectedStatus =
+    $("productStatus")?.value || "all";
 
   return products.filter(product => {
     const searchable = [
@@ -286,12 +301,34 @@ function getFilteredProducts() {
       product.description || ""
     ].join(" ").toLocaleLowerCase("pt-BR");
 
-    const matchesQuery = !query || searchable.includes(query);
-    const matchesStatus =
-      selectedStatus === "all" || product.status === selectedStatus;
-
-    return matchesQuery && matchesStatus;
+    return (
+      (!query || searchable.includes(query)) &&
+      (
+        selectedStatus === "all" ||
+        product.status === selectedStatus
+      )
+    );
   });
+}
+
+function renderProducts() {
+  const filtered = getFilteredProducts();
+
+  $("productsTable").innerHTML = filtered.map(p => `
+    <tr>
+      <td>${esc(p.name)}</td>
+      <td>${esc(p.category)}</td>
+      <td>${price(p.price)}</td>
+      <td>${esc(productStatus(p.status))}</td>
+      <td>${date(p.created_at)}</td>
+    </tr>
+  `).join("") || `
+    <tr>
+      <td colspan="5" class="muted">
+        Nenhum produto corresponde ao filtro.
+      </td>
+    </tr>
+  `;
 }
 
 async function loadProducts() {
@@ -307,24 +344,29 @@ async function loadProducts() {
   $("statProducts").textContent = products.length;
 
   $("statAvailable").textContent = products.filter(
-    product => product.status === "available"
+    p => p.status === "available"
   ).length;
 
-  $("recentProducts").innerHTML = products.slice(0, 5).map(product => `
-    <tr>
-      <td>${esc(product.name)}</td>
-      <td>${esc(product.category)}</td>
-      <td>${price(product.price)}</td>
-      <td>${esc(status(product.status))}</td>
-    </tr>
-  `).join("") || tableEmpty(4, "Nenhum produto cadastrado.");
+  $("recentProducts").innerHTML =
+    products.slice(0, 5).map(p => `
+      <tr>
+        <td>${esc(p.name)}</td>
+        <td>${esc(p.category)}</td>
+        <td>${price(p.price)}</td>
+        <td>${esc(productStatus(p.status))}</td>
+      </tr>
+    `).join("") || `
+      <tr>
+        <td colspan="4" class="muted">
+          Nenhum produto cadastrado.
+        </td>
+      </tr>
+    `;
 
   renderProducts();
 }
 
-// =====================================================
-// PERFIS
-// =====================================================
+/* PERFIS */
 
 async function loadProfiles() {
   const { data, error } = await db
@@ -334,20 +376,26 @@ async function loadProfiles() {
 
   if (error) throw error;
 
-  $("statProfiles").textContent = (data || []).length;
+  const rows = data || [];
 
-  $("profilesTable").innerHTML = (data || []).map(item => `
+  $("statProfiles").textContent = rows.length;
+
+  $("profilesTable").innerHTML = rows.map(item => `
     <tr>
       <td>${esc(item.display_name || "Sem nome")}</td>
       <td>${esc(item.role)}</td>
       <td><code>${esc(item.id)}</code></td>
     </tr>
-  `).join("") || tableEmpty(3, "Nenhum perfil visível para esta conta.");
+  `).join("") || `
+    <tr>
+      <td colspan="3" class="muted">
+        Nenhum perfil disponível.
+      </td>
+    </tr>
+  `;
 }
 
-// =====================================================
-// PEDIDOS
-// =====================================================
+/* PEDIDOS */
 
 async function loadOrders() {
   const { data, error } = await db
@@ -368,12 +416,16 @@ async function loadOrders() {
       <td>${esc(order.status || "—")}</td>
       <td>${date(order.created_at)}</td>
     </tr>
-  `).join("") || tableEmpty(3, "Nenhum pedido registrado.");
+  `).join("") || `
+    <tr>
+      <td colspan="3" class="muted">
+        Nenhum pedido registrado.
+      </td>
+    </tr>
+  `;
 }
 
-// =====================================================
-// AUDITORIA
-// =====================================================
+/* AUDITORIA */
 
 async function loadActivity() {
   const { data, error } = await db
@@ -384,18 +436,23 @@ async function loadActivity() {
 
   if (error) throw error;
 
-  $("activityTable").innerHTML = (data || []).map(item => `
-    <tr>
-      <td>${esc(item.action || item.event_type || item.event || "Evento")}</td>
-      <td>${esc(item.details || item.description || item.entity_type || "—")}</td>
-      <td>${date(item.created_at)}</td>
-    </tr>
-  `).join("") || tableEmpty(3, "Nenhum evento disponível.");
+  $("activityTable").innerHTML =
+    (data || []).map(item => `
+      <tr>
+        <td>${esc(item.action || "Evento")}</td>
+        <td><code>${esc(JSON.stringify(item.details))}</code></td>
+        <td>${date(item.created_at)}</td>
+      </tr>
+    `).join("") || `
+      <tr>
+        <td colspan="3" class="muted">
+          Nenhum evento disponível.
+        </td>
+      </tr>
+    `;
 }
 
-// =====================================================
-// ATUALIZAÇÃO GERAL
-// =====================================================
+/* ATUALIZAÇÃO GERAL */
 
 async function refreshAll() {
   message("Atualizando informações…");
@@ -407,109 +464,114 @@ async function refreshAll() {
     loadActivity()
   ]);
 
-  const labels = ["Catálogo", "Perfis", "Pedidos", "Auditoria"];
+  const labels = [
+    "Catálogo",
+    "Perfis",
+    "Pedidos",
+    "Auditoria"
+  ];
 
-  const rows = results.map((result, index) => {
-    const ok = result.status === "fulfilled";
+  $("serviceChecks").innerHTML = results.map(
+    (result, index) => {
+      const ok = result.status === "fulfilled";
 
-    return checkRow(
-      labels[index],
-      ok ? "OK" : "Sem acesso / erro",
-      ok ? "ok" : "warn"
-    );
-  });
+      return checkRow(
+        labels[index],
+        ok ? "OK" : "Erro / sem acesso",
+        ok ? "ok" : "warn"
+      );
+    }
+  ).join("");
 
-  $("serviceChecks").innerHTML = rows.join("");
-
-  const failures = results.filter(
+  const failed = results.some(
     result => result.status === "rejected"
   );
 
-  if (failures.length) {
-    message(
-      "Algumas consultas não estão disponíveis. " +
-      "Confira a seção Diagnóstico. Nenhuma permissão foi ampliada.",
-      "error"
-    );
-  } else {
-    message("Dados atualizados.");
-  }
+  message(
+    failed
+      ? "Algumas consultas falharam. Confira Diagnóstico."
+      : "Dados atualizados.",
+    failed ? "error" : "info"
+  );
 
   await runDiagnostics(false);
 }
 
-// =====================================================
-// DIAGNÓSTICO
-// =====================================================
+/* DIAGNÓSTICO */
 
 async function runDiagnostics(showNotice = true) {
   const tests = [
     [
       "Sessão autenticada",
       async () => {
-        const result = await db.auth.getSession();
-        if (result.error || !result.data.session) throw Error("Sem sessão");
+        const r = await db.auth.getSession();
+        if (r.error || !r.data.session) {
+          throw Error("Sem sessão");
+        }
       }
     ],
     [
       "Leitura do catálogo",
       async () => {
-        const result = await db.from("products").select("id").limit(1);
-        if (result.error) throw result.error;
+        const r = await db.from("products")
+          .select("id").limit(1);
+        if (r.error) throw r.error;
       }
     ],
     [
-      "Leitura dos perfis permitidos",
+      "Leitura de perfis",
       async () => {
-        const result = await db.from("profiles").select("id").limit(1);
-        if (result.error) throw result.error;
+        const r = await db.from("profiles")
+          .select("id").limit(1);
+        if (r.error) throw r.error;
       }
     ],
     [
       "Consulta de pedidos",
       async () => {
-        const result = await db.from("orders").select("id").limit(1);
-        if (result.error) throw result.error;
+        const r = await db.from("orders")
+          .select("id").limit(1);
+        if (r.error) throw r.error;
       }
     ],
     [
       "Consulta de auditoria",
       async () => {
-        const result = await db.from("activity_logs").select("*").limit(1);
-        if (result.error) throw result.error;
+        const r = await db.from("activity_logs")
+          .select("id").limit(1);
+        if (r.error) throw r.error;
       }
     ]
   ];
 
-  const results = await Promise.all(tests.map(async ([name, test]) => {
-    try {
-      await test();
-      return checkRow(name, "OK", "ok");
-    } catch (error) {
-      return checkRow(
-        name,
-        error.code || "Indisponível",
-        "warn"
-      );
-    }
-  }));
+  const results = await Promise.all(
+    tests.map(async ([name, test]) => {
+      try {
+        await test();
+        return checkRow(name, "OK", "ok");
+      } catch (error) {
+        return checkRow(
+          name,
+          error.code || "Indisponível",
+          "warn"
+        );
+      }
+    })
+  );
 
   $("diagnosticResults").innerHTML = results.join("");
 
   if (showNotice) {
-    message("Diagnóstico concluído. Consulte os resultados abaixo.");
+    message("Diagnóstico concluído.");
   }
 }
 
-// =====================================================
-// EVENTOS DA INTERFACE
-// =====================================================
+/* EVENTOS */
 
 $("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
 
   const button = $("loginButton");
-
   button.disabled = true;
   button.textContent = "Verificando…";
   $("loginMessage").textContent = "";
@@ -540,36 +602,33 @@ $("logoutButton").addEventListener("click", async () => {
 });
 
 $("refreshAll").addEventListener("click", () => {
-  refreshAll().catch(error => message(error.message, "error"));
+  refreshAll().catch(e => message(e.message, "error"));
 });
 
 $("refreshProducts").addEventListener("click", () => {
-  loadProducts().catch(error => message(error.message, "error"));
+  loadProducts().catch(e => message(e.message, "error"));
 });
 
 $("refreshProfiles").addEventListener("click", () => {
-  loadProfiles().catch(error => message(error.message, "error"));
+  loadProfiles().catch(e => message(e.message, "error"));
 });
 
 $("refreshOrders").addEventListener("click", () => {
-  loadOrders().catch(error => message(error.message, "error"));
+  loadOrders().catch(e => message(e.message, "error"));
 });
 
 $("refreshActivity").addEventListener("click", () => {
-  loadActivity().catch(error => message(error.message, "error"));
+  loadActivity().catch(e => message(e.message, "error"));
 });
 
 $("runDiagnostics").addEventListener("click", () => {
-  runDiagnostics(true).catch(error => message(error.message, "error"));
+  runDiagnostics(true).catch(e => message(e.message, "error"));
 });
 
 $("productSearch").addEventListener("input", renderProducts);
-
 $("productStatus").addEventListener("change", renderProducts);
 
-// =====================================================
-// APARÊNCIA
-// =====================================================
+/* PERSONALIZAÇÃO */
 
 $("themeSelect").addEventListener("change", event => {
   prefs.theme = event.target.value;
@@ -581,7 +640,9 @@ $("densitySelect").addEventListener("change", event => {
   savePrefs();
 });
 
-document.querySelectorAll("#swatches [data-accent]").forEach(button => {
+document.querySelectorAll(
+  "#swatches [data-accent]"
+).forEach(button => {
   button.addEventListener("click", () => {
     prefs.accent = button.dataset.accent;
     savePrefs();
@@ -589,11 +650,8 @@ document.querySelectorAll("#swatches [data-accent]").forEach(button => {
 });
 
 $("applyCustomAccent").addEventListener("click", () => {
-  const color = $("customAccent").value;
-
   prefs.accent = "custom";
-  prefs.customHex = color;
-
+  prefs.customHex = $("customAccent").value;
   savePrefs();
 });
 
@@ -605,29 +663,26 @@ $("resetAppearance").addEventListener("click", () => {
   } catch {}
 
   applyPrefs();
-
   $("appearanceMessage").textContent = "Padrão restaurado.";
 });
 
 $("quickTheme").addEventListener("click", () => {
   prefs.theme =
-    document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme === "dark"
+      ? "light"
+      : "dark";
 
   savePrefs();
 });
 
 try {
-  matchMedia("(prefers-color-scheme: light)").addEventListener(
-    "change",
-    () => {
+  matchMedia("(prefers-color-scheme: light)")
+    .addEventListener("change", () => {
       if (prefs.theme === "system") applyPrefs();
-    }
-  );
+    });
 } catch {}
 
-// =====================================================
-// INICIALIZAÇÃO
-// =====================================================
+/* INICIALIZAÇÃO */
 
 bindNavigation();
 applyPrefs();
