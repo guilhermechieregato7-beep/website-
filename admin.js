@@ -132,7 +132,7 @@ function formatError(error) {
 
 function ensureProductTools() {
   const container = $("products");
-  if (!container) return;
+  if (!container || !container.parentElement) return;
 
   let tools = $("productTools");
 
@@ -173,15 +173,95 @@ function ensureProductTools() {
     tools.insertAdjacentElement("afterend", count);
   }
 
-  $("productSearch")?.addEventListener("input", event => {
-    searchTerm = event.target.value.trim().toLocaleLowerCase("pt-BR");
-    renderProducts();
-  });
+  const search = $("productSearch");
+  const filter = $("statusFilter");
 
-  $("statusFilter")?.addEventListener("change", event => {
-    statusFilter = event.target.value;
-    renderProducts();
-  });
+  if (search && !search.dataset.listenerAdded) {
+    search.dataset.listenerAdded = "true";
+    search.addEventListener("input", event => {
+      searchTerm = event.target.value.trim().toLocaleLowerCase("pt-BR");
+      renderProducts();
+    });
+  }
+
+  if (filter && !filter.dataset.listenerAdded) {
+    filter.dataset.listenerAdded = "true";
+    filter.addEventListener("change", event => {
+      statusFilter = event.target.value;
+      renderProducts();
+    });
+  }
+}
+
+// =====================================================
+// LIMPEZA SEGURA DAS IMAGENS
+// =====================================================
+
+function getProductImagePath(publicUrl) {
+  if (!publicUrl) return null;
+
+  try {
+    const url = new URL(publicUrl);
+    const expectedOrigin = new URL(SUPABASE_URL).origin;
+    const prefix = "/storage/v1/object/public/product-images/";
+
+    if (
+      url.origin !== expectedOrigin ||
+      !url.pathname.startsWith(prefix)
+    ) {
+      return null;
+    }
+
+    const path = url.pathname.slice(prefix.length);
+
+    // As imagens deste painel são arquivos individuais.
+    if (!path || path.includes("/")) return null;
+
+    return decodeURIComponent(path);
+  } catch {
+    return null;
+  }
+}
+
+async function removeImageIfUnused(publicUrl) {
+  const path = getProductImagePath(publicUrl);
+  if (!path) return false;
+
+  try {
+    // Não remove uma imagem que outro produto ainda utiliza.
+    const { data, error } = await db
+      .from("products")
+      .select("id")
+      .eq("image_url", publicUrl)
+      .limit(1);
+
+    if (error) {
+      console.warn(
+        "Não foi possível verificar o uso da imagem:",
+        error.message
+      );
+      return false;
+    }
+
+    if (data && data.length > 0) return false;
+
+    const { error: removeError } = await db.storage
+      .from("product-images")
+      .remove([path]);
+
+    if (removeError) {
+      console.warn(
+        "Não foi possível remover a imagem antiga:",
+        removeError.message
+      );
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn("Erro durante a limpeza da imagem:", error);
+    return false;
+  }
 }
 
 // =====================================================
@@ -207,8 +287,11 @@ async function verifyAdmin() {
     .eq("id", session.user.id)
     .single();
 
-  if (profileError || !profile ||
-      !["admin", "superadmin"].includes(profile.role)) {
+  if (
+    profileError ||
+    !profile ||
+    !["admin", "superadmin"].includes(profile.role)
+  ) {
     await db.auth.signOut();
     currentRole = null;
     showDashboard(false);
@@ -262,7 +345,10 @@ async function loadProducts() {
       "success"
     );
   } catch (error) {
-    message("Erro ao carregar produtos: " + formatError(error), "error");
+    message(
+      "Erro ao carregar produtos: " + formatError(error),
+      "error"
+    );
   } finally {
     loadingProducts = false;
   }
@@ -391,6 +477,10 @@ function startEditing(product) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// =====================================================
+// ENVIO DE IMAGENS
+// =====================================================
+
 async function uploadImage(file) {
   if (!file) return null;
 
@@ -435,6 +525,10 @@ async function uploadImage(file) {
   };
 }
 
+// =====================================================
+// SALVAR PRODUTO
+// =====================================================
+
 async function saveProduct(event) {
   event.preventDefault();
 
@@ -449,6 +543,12 @@ async function saveProduct(event) {
 
   try {
     const id = $("productId").value.trim();
+
+    const previousProduct = id
+      ? products.find(item => String(item.id) === id)
+      : null;
+
+    const previousImageUrl = previousProduct?.image_url || null;
     const file = $("photo").files[0];
 
     const name = $("name").value.trim();
@@ -512,25 +612,44 @@ async function saveProduct(event) {
     resetForm();
 
     message(
-      id ? "Produto atualizado com sucesso!" : "Produto cadastrado com sucesso!",
+      id
+        ? "Produto atualizado com sucesso!"
+        : "Produto cadastrado com sucesso!",
       "success"
     );
 
+    // A imagem antiga só é avaliada depois que a alteração foi confirmada.
+    if (
+      file &&
+      previousImageUrl &&
+      previousImageUrl !== product.image_url
+    ) {
+      await removeImageIfUnused(previousImageUrl);
+    }
+
     await loadProducts();
   } catch (error) {
-    // Se o envio da foto deu certo, mas o cadastro falhou,
-    // tentamos remover o arquivo que ficou sem uso.
+    // Se a foto foi enviada mas o cadastro falhou, limpa somente
+    // se nenhum produto estiver utilizando esse arquivo.
     if (uploadedPath) {
-      const { error: cleanupError } = await db.storage
-        .from("product-images")
-        .remove([uploadedPath]);
+      try {
+        const { data: uploadedData } = db.storage
+          .from("product-images")
+          .getPublicUrl(uploadedPath);
 
-      if (cleanupError) {
-        console.warn("Não foi possível limpar a foto enviada:", cleanupError.message);
+        await removeImageIfUnused(uploadedData.publicUrl);
+      } catch (cleanupError) {
+        console.warn(
+          "Não foi possível limpar a foto enviada:",
+          cleanupError
+        );
       }
     }
 
-    message("Não foi possível salvar: " + formatError(error), "error");
+    message(
+      "Não foi possível salvar: " + formatError(error),
+      "error"
+    );
   } finally {
     busy = false;
     setButtonLoading(button, false);
@@ -538,7 +657,7 @@ async function saveProduct(event) {
 }
 
 // =====================================================
-// EVENTOS
+// LOGIN
 // =====================================================
 
 $("loginForm")?.addEventListener("submit", async event => {
@@ -569,6 +688,10 @@ $("loginForm")?.addEventListener("submit", async event => {
   }
 });
 
+// =====================================================
+// SAIR DA CONTA
+// =====================================================
+
 $("logout")?.addEventListener("click", async () => {
   try {
     const { error } = await db.auth.signOut();
@@ -578,9 +701,16 @@ $("logout")?.addEventListener("click", async () => {
     showDashboard(false);
     message("Você saiu da conta.", "success");
   } catch (error) {
-    message("Não foi possível sair: " + formatError(error), "error");
+    message(
+      "Não foi possível sair: " + formatError(error),
+      "error"
+    );
   }
 });
+
+// =====================================================
+// EVENTOS DO PAINEL
+// =====================================================
 
 $("refresh")?.addEventListener("click", loadProducts);
 
@@ -647,9 +777,18 @@ $("products")?.addEventListener("click", async event => {
       }
 
       message("Produto excluído com sucesso!", "success");
+
+      // O produto já saiu do banco. Remove a foto apenas se não for usada.
+      if (product.image_url) {
+        await removeImageIfUnused(product.image_url);
+      }
+
       await loadProducts();
     } catch (error) {
-      message("Erro ao excluir: " + formatError(error), "error");
+      message(
+        "Erro ao excluir: " + formatError(error),
+        "error"
+      );
     } finally {
       busy = false;
       setButtonLoading(button, false);
@@ -657,7 +796,10 @@ $("products")?.addEventListener("click", async event => {
   }
 });
 
-// Mantém a interface coerente se a sessão terminar.
+// =====================================================
+// SESSÃO
+// =====================================================
+
 db.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_OUT" || !session) {
     currentRole = null;
@@ -672,6 +814,4 @@ db.auth.onAuthStateChange((event, session) => {
 ensureProductTools();
 
 verifyAdmin().catch(error => {
-  console.error("Falha ao inicializar o painel:", error);
-  message(formatError(error), "error");
-});
+  console.error("Falha
