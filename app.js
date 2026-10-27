@@ -269,3 +269,59 @@ document.querySelector("#contact-link").href = whatsappLink(
 );
 
 loadProducts();
+
+
+
+
+
+(() => {
+  const root = document.documentElement;
+  const button = document.getElementById("publicThemeToggle");
+  const storageKey = "vitrine.public.theme.v1";
+
+  let theme = "light";
+
+  try {
+    theme = localStorage.getItem(storageKey) || "light";
+  } catch {
+    theme = "light";
+  }
+
+  if (!["light", "dark"].includes(theme)) {
+    theme = "light";
+  }
+
+  function applyTheme() {
+    root.dataset.publicTheme = theme;
+
+    if (button) {
+      button.textContent = theme === "dark" ? "☀️" : "🌙";
+      button.setAttribute(
+        "aria-label",
+        theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"
+      );
+      button.title =
+        theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro";
+    }
+
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+
+    if (metaTheme) {
+      metaTheme.content = theme === "dark" ? "#121117" : "#f7f3eb";
+    }
+  }
+
+  button?.addEventListener("click", () => {
+    theme = theme === "dark" ? "light" : "dark";
+    applyTheme();
+
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch {
+      console.warn("Não foi possível salvar a preferência de tema.");
+    }
+  });
+
+  applyTheme();
+})();
+
