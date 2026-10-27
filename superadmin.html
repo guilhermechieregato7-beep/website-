@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#11111b">
+  <title>Superadmin | Vitrine Artesanal</title>
+  <link rel="stylesheet" href="./superadmin.css">
+</head>
+<body>
+  <div id="loginScreen" class="login-wrap">
+    <form id="loginForm" class="login-card">
+      <div class="brand-mark">VA</div>
+      <p class="eyebrow">CENTRAL DE CONTROLE</p>
+      <h1>Superadmin</h1>
+      <p class="muted">Entre com a conta autorizada de superadministrador.</p>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">Senha</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button class="primary full" id="loginButton" type="submit">Entrar na central</button>
+      <p id="loginMessage" class="message" role="status"></p>
+      <a class="muted back-link" href="./admin.html">Ir para o painel da loja</a>
+    </form>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#overview">
+        <span class="brand-mark">VA</span>
+        <span><b>Vitrine Artesanal</b><small>CONTROL CENTER</small></span>
+      </a>
+
+      <div class="side-label">PLATAFORMA</div>
+      <button class="nav-item active" data-page="overview">◈ <span>Visão geral</span></button>
+      <button class="nav-item" data-page="products">▦ <span>Produtos</span></button>
+      <button class="nav-item" data-page="users">♙ <span>Perfis e usuários</span></button>
+      <button class="nav-item" data-page="orders">▤ <span>Pedidos</span></button>
+      <button class="nav-item" data-page="activity">⌁ <span>Auditoria</span></button>
+
+      <div class="side-label">SISTEMA</div>
+      <button class="nav-item" data-page="diagnostics">⌘ <span>Diagnóstico</span></button>
+      <button class="nav-item" data-page="appearance">◐ <span>Aparência</span></button>
+
+      <div class="sidebar-bottom">
+        <div class="user-chip">
+          <span class="status-dot"></span>
+          <span><b id="profileName">Superadmin</b><small id="profileEmail">Sessão autenticada</small></span>
+        </div>
+        <button class="nav-item" id="logoutButton">↪ <span>Sair da conta</span></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="menuToggle" class="icon-button" aria-label="Abrir menu">☰</button>
+        <div>
+          <p class="eyebrow">VITRINE ARTESANAL / <span id="breadcrumb">VISÃO GERAL</span></p>
+          <h1 id="pageTitle">Visão geral</h1>
+        </div>
+        <div class="top-actions">
+          <span class="live-pill"><i></i> Sessão ativa</span>
+          <button id="quickTheme" class="icon-button" title="Alternar tema" aria-label="Alternar tema">◐</button>
+        </div>
+      </header>
+
+      <div id="notice" class="notice" role="status"></div>
+
+      <section class="page" id="page-overview">
+        <div class="welcome-row">
+          <div>
+            <h2>Central de controle</h2>
+            <p class="muted">Uma visão técnica da loja e dos recursos conectados.</p>
+          </div>
+          <button class="secondary" id="refreshAll">↻ Atualizar dados</button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-label">Produtos cadastrados</span><strong id="statProducts">—</strong><small>Catálogo da loja</small></article>
+          <article class="stat-card"><span class="stat-label">Produtos disponíveis</span><strong id="statAvailable">—</strong><small>Disponibilidade atual</small></article>
+          <article class="stat-card"><span class="stat-label">Perfis cadastrados</span><strong id="statProfiles">—</strong><small>Perfis visíveis ao seu acesso</small></article>
+          <article class="stat-card"><span class="stat-label">Pedidos registrados</span><strong id="statOrders">—</strong><small>Se a tabela estiver acessível</small></article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-head">
+              <div><h3>Estado dos serviços</h3><p class="muted">Verificações realizadas nesta sessão</p></div>
+              <span class="panel-icon">⌘</span>
+            </div>
+            <div id="serviceChecks" class="check-list">
+              <div class="check-row"><span>Autenticação e perfil</span><b class="pill neutral">Verificando</b></div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head"><div><h3>Acesso rápido</h3><p class="muted">Ferramentas administrativas</p></div></div>
+            <div class="quick-grid">
+              <button class="quick-card" data-goto="products"><b>▦</b><span>Catálogo</span><small>Consultar produtos</small></button>
+              <button class="quick-card" data-goto="users"><b>♙</b><span>Perfis</span><small>Consultar acessos</small></button>
+              <button class="quick-card" data-goto="diagnostics"><b>⌘</b><span>Diagnóstico</span><small>Conexões e tabelas</small></button>
+              <button class="quick-card" data-goto="appearance"><b>◐</b><span>Aparência</span><small>Tema e cores</small></button>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div><h3>Produtos recentes</h3><p class="muted">Últimos registros do catálogo</p></div>
+            <button class="secondary small" data-goto="products">Ver todos</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Status</th></tr></thead>
+              <tbody id="recentProducts"><tr><td colspan="4" class="muted">Carregando…</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="page hidden" id="page-products">
+        <article class="panel">
+          <div class="panel-head">
+            <div><h2>Produtos</h2><p class="muted">Consulta do catálogo. Edição continua no painel de loja.</p></div>
+            <button class="secondary" id="refreshProducts">↻ Atualizar</button>
+          </div>
+          <div class="toolbar">
+            <input id="productSearch" type="search" placeholder="Buscar por nome ou categoria">
+            <select id="productStatus">
+              <option value="all">Todos os status</option>
+              <option value="available">Disponível</option>
+              <option value="made_to_order">Sob encomenda</option>
+              <option value="sold_out">Esgotado</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Criado em</th></tr></thead>
+              <tbody id="productsTable"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="page hidden" id="page-users">
+        <article class="panel">
+          <div class="panel-head">
+            <div><h2>Perfis e usuários</h2><p class="muted">Consulta dos perfis existentes.</p></div>
+            <button class="secondary" id="refreshProfiles">↻ Atualizar</button>
+          </div>
+          <div class="callout">Por segurança, esta primeira versão não permite promover contas nem editar funções. Precisamos validar as políticas de acesso do banco antes de habilitar essas operações.</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nome</th><th>Função</th><th>ID do perfil</th></tr></thead>
+              <tbody id="profilesTable"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="page hidden" id="page-orders">
+        <article class="panel">
+          <div class="panel-head">
+            <div><h2>Pedidos</h2><p class="muted">Consulta dos registros existentes no banco.</p></div>
+            <button class="secondary" id="refreshOrders">↻ Atualizar</button>
+          </div>
+          <div class="callout">Os pedidos aparecerão aqui quando existirem registros reais e a conta tiver permissão para consultá-los.</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>ID</th><th>Status</th><th>Data</th></tr></thead>
+              <tbody id="ordersTable"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="page hidden" id="page-activity">
+        <article class="panel">
+          <div class="panel-head">
+            <div><h2>Auditoria</h2><p class="muted">Eventos registrados em activity_logs, quando disponíveis.</p></div>
+            <button class="secondary" id="refreshActivity">↻ Atualizar</button>
+          </div>
+          <div class="callout">Esta tela consulta registros existentes. O registro automático de eventos precisa ser implementado separadamente.</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Evento</th><th>Detalhes</th><th>Data</th></tr></thead>
+              <tbody id="activityTable"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="page hidden" id="page-diagnostics">
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-head">
+              <div><h2>Diagnóstico</h2><p class="muted">Testes realizados a partir do navegador.</p></div>
+              <button class="secondary" id="runDiagnostics">Executar testes</button>
+            </div>
+            <div id="diagnosticResults" class="check-list"></div>
+          </article>
+          <article class="panel">
+            <h3>Limites de segurança</h3>
+            <p class="muted">Operações privilegiadas devem ser protegidas por políticas RLS ou funções de servidor autorizadas.</p>
+            <div class="callout">Nunca coloque a chave service_role ou qualquer segredo do Supabase nos arquivos públicos do GitHub.</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page hidden" id="page-appearance">
+        <div class="content-grid">
+          <article class="panel">
+            <h2>Aparência do seu painel</h2>
+            <p class="muted">Essas escolhas são pessoais e não mudam o painel da artesã.</p>
+
+            <label for="themeSelect">Tema</label>
+            <select id="themeSelect">
+              <option value="dark">Escuro</option>
+              <option value="light">Claro</option>
+              <option value="system">Automático (sistema)</option>
+            </select>
+
+            <label>Cor de destaque</label>
+            <div class="swatches" id="swatches">
+              <button data-accent="violet" aria-label="Roxo" title="Roxo"></button>
+              <button data-accent="lavender" aria-label="Lavanda" title="Lavanda"></button>
+              <button data-accent="blue" aria-label="Azul" title="Azul"></button>
+              <button data-accent="green" aria-label="Verde" title="Verde"></button>
+              <button data-accent="orange" aria-label="Laranja" title="Laranja"></button>
+              <button data-accent="red" aria-label="Vermelho" title="Vermelho"></button>
+            </div>
+
+            <label for="customAccent">Cor personalizada</label>
+            <div class="color-row">
+              <input id="customAccent" type="color" value="#8b5cf6">
+              <button class="secondary" id="applyCustomAccent">Aplicar cor</button>
+            </div>
+
+            <label for="densitySelect">Densidade da interface</label>
+            <select id="densitySelect">
+              <option value="comfortable">Confortável</option>
+              <option value="compact">Compacta</option>
+            </select>
+
+            <button class="secondary" id="resetAppearance">Restaurar padrão</button>
+            <p id="appearanceMessage" class="muted" role="status"></p>
+          </article>
+
+          <article class="panel">
+            <h2>Prévia</h2>
+            <p class="muted">A prévia acompanha suas escolhas.</p>
+            <div class="preview-card">
+              <div class="preview-head"><span class="preview-dot"></span><b>Vitrine Artesanal</b><span class="preview-badge">Superadmin</span></div>
+              <div class="preview-metric">
+                <small>Indicador de exemplo</small>
+                <strong>Exemplo visual</strong>
+                <div class="preview-bar"><span></span></div>
+              </div>
+              <button class="primary">Botão de destaque</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer">Vitrine Artesanal · Superadmin · Fundação inicial</footer>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./superadmin.js"></script>
+</body>
+</html>
