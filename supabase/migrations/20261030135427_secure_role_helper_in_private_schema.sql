@@ -95,4 +95,3 @@ with check (
 
 -- Remove the old exposed RPC only after all policies use the private helper.
 drop function if exists public.current_user_role();
-~/downloads $
