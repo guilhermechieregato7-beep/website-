@@ -252,20 +252,22 @@ async function verifySuperadmin() {
       .eq("id", session.user.id)
       .maybeSingle();
 
-  if (
-    profileError ||
-    !userProfile ||
-    userProfile.role !== "superadmin"
-  ) {
-    await db.auth.signOut();
+  if (profileError || !userProfile) {
+  await db.auth.signOut();
+  window.location.replace("./admin.html");
+  return false;
+}
 
-    $("loginScreen").classList.remove("hidden");
-    $("app").classList.add("hidden");
+if (userProfile.role === "admin") {
+  window.location.replace("./admin.html");
+  return false;
+}
 
-    throw new Error(
-      "Acesso exclusivo para uma conta Superadmin."
-    );
-  }
+if (userProfile.role !== "superadmin") {
+  await db.auth.signOut();
+  window.location.replace("./admin.html");
+  return false;
+}
 
   profile = userProfile;
 
