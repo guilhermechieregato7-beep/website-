@@ -308,7 +308,6 @@ async function verifyAdmin() {
 
   currentRole = profile.role;
 
-// Redireciona o Superadmin para sua central de controle.
 if (currentRole === "superadmin") {
   window.location.replace("./superadmin.html");
   return true;
