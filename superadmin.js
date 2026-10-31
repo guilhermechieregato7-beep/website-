@@ -569,37 +569,10 @@ async function runDiagnostics(showNotice = true) {
 
 /* EVENTOS */
 
-$("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const button = $("loginButton");
-  button.disabled = true;
-  button.textContent = "Verificando…";
-  $("loginMessage").textContent = "";
-
-  try {
-    const { error } = await db.auth.signInWithPassword({
-      email: $("email").value.trim(),
-      password: $("password").value
-    });
-
-    if (error) throw error;
-
-    await verifySuperadmin();
-  } catch (error) {
-    $("loginMessage").textContent =
-      error.message || "Não foi possível entrar.";
-  } finally {
-    button.disabled = false;
-    button.textContent = "Entrar na central";
-  }
-});
-
 $("logoutButton").addEventListener("click", async () => {
   await db.auth.signOut();
 
-  $("app").classList.add("hidden");
-  $("loginScreen").classList.remove("hidden");
+  window.location.replace("./admin.html");
 });
 
 $("refreshAll").addEventListener("click", () => {
