@@ -31,18 +31,99 @@
   <script src="app.js" defer></script>
 </head>
 <body>
-  <header class="header">
-    <a class="logo" href="#inicio">feito <span>à mão.</span></a>    
-<nav>
-  <a href="#catalogo">Coleção</a>
-  <a href="#sobre">Nossa história</a>
-  <a href="#contato">Contato</a>
-  <button id="publicThemeToggle" type="button"
-    class="theme-toggle" aria-label="Ativar modo escuro">
-    🌙
-  </button>
-</nav>
-  </header>
+<header class="header">
+  <a class="logo" href="#inicio">
+    feito <span>à mão.</span>
+  </a>
+
+  <nav class="primary-nav" aria-label="Navegação principal">
+
+    <a href="#catalogo">Coleção</a>
+    <span class="nav-separator" aria-hidden="true">|</span>
+
+    <a href="#sobre">Nossa história</a>
+    <span class="nav-separator" aria-hidden="true">|</span>
+
+    <a href="#contato">Contato</a>
+
+    <button id="publicThemeToggle"
+      type="button"
+      class="theme-toggle"
+      aria-label="Ativar modo escuro">
+      🌙
+    </button>
+
+    <button
+      id="menuToggle"
+      class="menu-toggle"
+      type="button"
+      aria-label="Abrir menu"
+      aria-expanded="false"
+      aria-controls="sideDrawer">
+
+      <span></span>
+      <span></span>
+      <span></span>
+
+    </button>
+
+  </nav>
+</header>
+
+<!-- Fundo escurecido -->
+<button
+  id="menuBackdrop"
+  class="menu-backdrop"
+  type="button"
+  aria-label="Fechar menu"
+  hidden>
+</button>
+
+<!-- Gaveta lateral -->
+<aside
+  id="sideDrawer"
+  class="side-drawer"
+  aria-label="Menu adicional"
+  aria-hidden="true"
+  inert>
+
+  <div class="drawer-header">
+
+    <span class="drawer-title">Menu</span>
+
+    <button
+      id="closeMenu"
+      class="drawer-close"
+      type="button"
+      aria-label="Fechar menu">
+
+      ×
+
+    </button>
+
+  </div>
+
+  <div class="drawer-content">
+
+    <a href="./admin.html" class="drawer-admin-link">
+
+      <span class="drawer-link-icon" aria-hidden="true">
+        ♙
+      </span>
+
+      <span>Área administrativa</span>
+
+      <span class="drawer-arrow" aria-hidden="true">
+        ↗
+      </span>
+
+    </a>
+
+  </div>
+
+  <div class="drawer-footer"></div>
+
+</aside>
 
   <main>
     <section class="hero" id="inicio">
