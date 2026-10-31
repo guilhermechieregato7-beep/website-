@@ -277,7 +277,6 @@ if (userProfile.role !== "superadmin") {
   $("profileEmail").textContent =
     session.user.email || "Sessão autenticada";
 
-  $("loginScreen").classList.add("hidden");
   $("app").classList.remove("hidden");
 
   await refreshAll();
