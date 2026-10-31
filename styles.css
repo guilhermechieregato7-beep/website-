@@ -370,40 +370,22 @@ footer p, footer > a:last-child { font-size: 11px; color: var(--muted); }
 
 
 
-/* Correção definitiva dos estados visuais */
 
-:root {
-  -webkit-tap-highlight-color: transparent;
+/* Botão rosa no modo escuro */
+:root[data-public-theme="dark"] .button,
+:root[data-public-theme="dark"] .button:hover,
+:root[data-public-theme="dark"] .button:active,
+:root[data-public-theme="dark"] .button:focus {
+    background: #D4A0BD !important;
+    border-color: #D4A0BD !important;
+    color: #211923 !important;
+    transform: none;
 }
 
-/* Preserva o rosa dos títulos */
-h1 em,
-h2 em {
-  color: var(--clay);
-}
-
-/* Seleção de texto */
-::selection {
-  color: var(--clay);
-  background: rgba(212, 160, 189, 0.30);
-}
-
-/* Botões com contraste correto nos dois temas */
+/* Transição suave */
 .button {
-  color: var(--paper);
+    transition: background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
 }
 
-/* Mantém o efeito rosa ao passar o mouse */
-.button:hover {
-  background: var(--clay);
-  border-color: var(--clay);
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-/* Mantém o efeito rosa durante o toque */
-.button:active {
-  background: var(--clay);
-  border-color: var(--clay);
-  color: #fff;
-}
