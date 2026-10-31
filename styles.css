@@ -389,3 +389,345 @@ footer p, footer > a:last-child { font-size: 11px; color: var(--muted); }
                 transform .2s ease;
 }
 
+
+
+
+/* =========================================
+   NAVEGAÇÃO HORIZONTAL
+========================================= */
+
+.header {
+  position: relative;
+  z-index: 30;
+}
+
+.primary-nav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 13px;
+}
+
+.primary-nav .nav-separator {
+  color: var(--muted);
+  opacity: 0.35;
+  font-weight: 400;
+  user-select: none;
+}
+
+.primary-nav a {
+  transition: color 0.2s ease;
+}
+
+.primary-nav a:hover {
+  color: var(--clay);
+}
+
+
+/* =========================================
+   BOTÃO DO MENU
+========================================= */
+
+.menu-toggle {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+
+  padding: 10px;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  border: 1px solid var(--line);
+  border-radius: 50%;
+
+  background: var(--cream);
+  color: var(--ink);
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.menu-toggle:hover {
+  background: var(--line);
+  transform: translateY(-1px);
+}
+
+.menu-toggle span {
+  display: block;
+
+  width: 17px;
+  height: 1.5px;
+
+  border-radius: 2px;
+  background: currentColor;
+
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease;
+}
+
+
+/* =========================================
+   FUNDO ESCURECIDO
+========================================= */
+
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+
+  z-index: 90;
+
+  border: none;
+
+  background: rgba(24, 22, 20, 0.42);
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
+}
+
+.menu-backdrop[hidden] {
+  display: none;
+}
+
+.menu-backdrop.is-visible {
+  opacity: 1;
+}
+
+
+/* =========================================
+   GAVETA LATERAL
+========================================= */
+
+.side-drawer {
+  position: fixed;
+
+  top: 0;
+  right: 0;
+
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+
+  width: min(390px, 82vw);
+  height: 100vh;
+  height: 100dvh;
+
+  padding: 27px 25px;
+
+  background: var(--cream);
+  color: var(--ink);
+
+  border-left: 1px solid var(--line);
+
+  box-shadow:
+    -18px 0 55px rgba(25, 20, 15, 0.12);
+
+  transform: translateX(105%);
+
+  visibility: hidden;
+
+  transition:
+    transform 0.32s cubic-bezier(0.22, 0.75, 0.25, 1),
+    visibility 0.32s;
+}
+
+.side-drawer.is-open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+
+/* =========================================
+   CABEÇALHO DA GAVETA
+========================================= */
+
+.drawer-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 20px;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer-title {
+  font-family: var(--serif);
+  font-size: 23px;
+  font-weight: 600;
+}
+
+.drawer-close {
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: var(--ink);
+
+  font-size: 29px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.drawer-close:hover {
+  background: var(--line);
+  transform: rotate(90deg);
+}
+
+
+/* =========================================
+   CONTEÚDO DA GAVETA
+========================================= */
+
+.drawer-content {
+  padding: 18px 0;
+}
+
+.drawer-admin-link {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 54px;
+
+  padding: 12px 4px;
+
+  border-bottom: 1px solid var(--line);
+
+  font-size: 14px;
+
+  transition:
+    color 0.2s ease,
+    padding 0.2s ease;
+}
+
+.drawer-admin-link:hover {
+  color: var(--clay);
+  padding-left: 9px;
+}
+
+.drawer-link-icon {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+
+  border: 1px solid var(--line);
+  border-radius: 50%;
+
+  font-size: 17px;
+}
+
+.drawer-arrow {
+  margin-left: auto;
+
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.drawer-footer {
+  margin-top: auto;
+
+  border-top: 1px solid var(--line);
+
+  min-height: 1px;
+}
+
+
+/* =========================================
+   ESTADO ABERTO
+========================================= */
+
+body.drawer-open {
+  overflow: hidden;
+}
+
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .primary-nav {
+    width: 100%;
+
+    justify-content: space-between;
+
+    gap: 9px;
+
+    font-size: 12px;
+  }
+
+  .menu-toggle {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+  }
+
+  .side-drawer {
+    width: min(360px, 84vw);
+    padding: 24px 21px;
+  }
+
+}
+
+@media (max-width: 380px) {
+
+  .primary-nav {
+    gap: 6px;
+    font-size: 10px;
+  }
+
+  .primary-nav .nav-separator {
+    font-size: 10px;
+  }
+
+}
+
+
+/* =========================================
+   ACESSIBILIDADE
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .side-drawer,
+  .menu-backdrop,
+  .drawer-close,
+  .menu-toggle,
+  .drawer-admin-link {
+    transition: none !important;
+  }
+
+}
