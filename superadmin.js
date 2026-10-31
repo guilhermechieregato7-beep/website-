@@ -241,10 +241,9 @@ async function verifySuperadmin() {
   const session = data.session;
 
   if (!session) {
-    $("loginScreen").classList.remove("hidden");
-    $("app").classList.add("hidden");
-    return false;
-  }
+  window.location.replace("./admin.html");
+  return false;
+}
 
   const { data: userProfile, error: profileError } =
     await db
