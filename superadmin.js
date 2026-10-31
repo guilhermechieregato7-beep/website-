@@ -662,8 +662,7 @@ applyPrefs();
 
 db.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_OUT" || !session) {
-    $("app").classList.add("hidden");
-    $("loginScreen").classList.remove("hidden");
+    window.location.replace("./admin.html");
   }
 });
 
