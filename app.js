@@ -330,3 +330,95 @@ loadProducts();
 })();
 
 
+
+
+
+/* =========================================
+   GAVETA LATERAL
+========================================= */
+
+(() => {
+
+  const menuToggle = document.getElementById("menuToggle");
+  const closeMenu = document.getElementById("closeMenu");
+  const drawer = document.getElementById("sideDrawer");
+  const backdrop = document.getElementById("menuBackdrop");
+
+  if (!menuToggle || !closeMenu || !drawer || !backdrop) {
+    console.warn("Elementos da gaveta lateral não encontrados.");
+    return;
+  }
+
+  let isOpen = false;
+
+  function openMenu() {
+
+    if (isOpen) return;
+
+    isOpen = true;
+
+    backdrop.hidden = false;
+
+    requestAnimationFrame(() => {
+      backdrop.classList.add("is-visible");
+      drawer.classList.add("is-open");
+    });
+
+    drawer.setAttribute("aria-hidden", "false");
+    drawer.inert = false;
+
+    menuToggle.setAttribute("aria-expanded", "true");
+
+    document.body.classList.add("drawer-open");
+
+    closeMenu.focus();
+
+  }
+
+  function closeDrawer() {
+
+    if (!isOpen) return;
+
+    isOpen = false;
+
+    drawer.classList.remove("is-open");
+    backdrop.classList.remove("is-visible");
+
+    drawer.setAttribute("aria-hidden", "true");
+    drawer.inert = true;
+
+    menuToggle.setAttribute("aria-expanded", "false");
+
+    document.body.classList.remove("drawer-open");
+
+    // Aguarda a animação antes de esconder o fundo.
+    setTimeout(() => {
+      if (!isOpen) {
+        backdrop.hidden = true;
+      }
+    }, 320);
+
+    menuToggle.focus();
+
+  }
+
+  // Abrir
+  menuToggle.addEventListener("click", openMenu);
+
+  // Fechar pelo X
+  closeMenu.addEventListener("click", closeDrawer);
+
+  // Fechar tocando fora
+  backdrop.addEventListener("click", closeDrawer);
+
+  // Fechar com ESC
+  document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape" && isOpen) {
+      closeDrawer();
+    }
+
+  });
+
+})();
+
