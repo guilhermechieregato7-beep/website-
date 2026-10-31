@@ -363,54 +363,47 @@ footer p, footer > a:last-child { font-size: 11px; color: var(--muted); }
 
 
 
-/* Correções de interação e contraste no celular */
+
+
+
+
+
+
+
+/* Correção definitiva dos estados visuais */
 
 :root {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Preserva o rosa dos títulos */
+h1 em,
+h2 em {
+  color: var(--clay);
+}
+
 /* Seleção de texto */
 ::selection {
-  color: var(--ink);
-  background: color-mix(in srgb, var(--clay) 30%, var(--paper));
-}
-
-h1 em::selection,
-h2 em::selection {
   color: var(--clay);
-  background: color-mix(in srgb, var(--clay) 24%, var(--paper));
+  background: rgba(212, 160, 189, 0.30);
 }
 
-/* Contraste dos botões nos dois temas */
+/* Botões com contraste correto nos dois temas */
 .button {
   color: var(--paper);
 }
 
-/* Evita hover persistente em celulares */
-@media (hover: none) and (pointer: coarse) {
-  nav a:hover,
-  footer a:hover {
-    color: inherit;
-  }
-
-  .button:hover {
-    background: var(--ink);
-    border-color: var(--ink);
-    transform: none;
-  }
-
-  .category-button:hover:not(.active) {
-    background: transparent;
-    color: var(--ink);
-    border-color: var(--line);
-  }
-
-  .product-card:hover img {
-    transform: none;
-  }
-
-  .theme-toggle:hover {
-    transform: none;
-  }
+/* Mantém o efeito rosa ao passar o mouse */
+.button:hover {
+  background: var(--clay);
+  border-color: var(--clay);
+  color: #fff;
+  transform: translateY(-2px);
 }
 
+/* Mantém o efeito rosa durante o toque */
+.button:active {
+  background: var(--clay);
+  border-color: var(--clay);
+  color: #fff;
+}
