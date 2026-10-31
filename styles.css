@@ -358,3 +358,59 @@ footer p, footer > a:last-child { font-size: 11px; color: var(--muted); }
   }
 }
 
+
+
+
+
+
+/* Correções de interação e contraste no celular */
+
+:root {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Seleção de texto */
+::selection {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--clay) 30%, var(--paper));
+}
+
+h1 em::selection,
+h2 em::selection {
+  color: var(--clay);
+  background: color-mix(in srgb, var(--clay) 24%, var(--paper));
+}
+
+/* Contraste dos botões nos dois temas */
+.button {
+  color: var(--paper);
+}
+
+/* Evita hover persistente em celulares */
+@media (hover: none) and (pointer: coarse) {
+  nav a:hover,
+  footer a:hover {
+    color: inherit;
+  }
+
+  .button:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    transform: none;
+  }
+
+  .category-button:hover:not(.active) {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .product-card:hover img {
+    transform: none;
+  }
+
+  .theme-toggle:hover {
+    transform: none;
+  }
+}
+
