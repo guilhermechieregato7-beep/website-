@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f3eb"><meta name="description" content="Explore a coleção de peças artesanais da Vitrine Artesanal.">
+  <title>Coleção | Feito à Mão</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../site.css">
+  <script src="../site.js" defer></script>
+</head>
+<body>
+<header class="header site-header"><a class="logo" href="../index.html">feito <span>à mão.</span></a>
+<nav class="primary-nav" aria-label="Navegação principal"><a href="../index.html">Início</a><span class="nav-separator">|</span><a href="colecao.html" aria-current="page">Coleção</a><span class="nav-separator">|</span><a href="historia.html">História</a><span class="nav-separator">|</span><a href="contato.html">Contato</a><button id="publicThemeToggle" class="theme-toggle" type="button" aria-label="Ativar modo escuro">🌙</button><button id="menuToggle" class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sideDrawer"><span></span><span></span><span></span></button></nav></header>
+<button id="menuBackdrop" class="menu-backdrop" type="button" aria-label="Fechar menu" hidden></button>
+<aside id="sideDrawer" class="side-drawer" aria-label="Menu adicional" aria-hidden="true" inert><div class="drawer-header"><span class="drawer-title">Menu</span><button id="closeMenu" class="drawer-close" type="button" aria-label="Fechar menu">×</button></div><div class="drawer-content"><a href="../admin.html" class="drawer-admin-link"><span class="drawer-link-icon">♙</span><span>Área administrativa</span><span class="drawer-arrow">↗</span></a></div><div class="drawer-footer"></div></aside>
+<main class="inner-page">
+  <section class="page-hero"><span class="eyebrow reveal">ENCONTRE A SUA PEÇA</span><h1 class="text-reveal">Nossa <em>coleção.</em></h1><p class="reveal">Cada criação tem sua própria personalidade. Explore as peças disponíveis e encontre a sua favorita.</p></section>
+  <section class="collection-section">
+    <div class="filters reveal"><input id="search" type="search" placeholder="Buscar produtos..." aria-label="Buscar produtos"><div id="categories" class="categories"></div></div>
+    <div id="products" class="products"></div><p id="empty" class="empty" hidden>Nenhum produto encontrado. Tente outra busca.</p>
+    <p id="collectionStatus" class="collection-status" aria-live="polite"></p>
+  </section>
+</main>
+<footer class="site-footer"><a class="logo" href="../index.html">feito <span>à mão.</span></a><p>Feito com carinho, peça por peça.</p><a href="contato.html">Entre em contato ↗</a></footer>
+<dialog id="product-dialog" class="product-dialog site-product-dialog"><button id="close-dialog" class="close-dialog" aria-label="Fechar">×</button><div id="dialog-content"></div></dialog>
+</body></html>
