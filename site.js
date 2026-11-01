@@ -81,18 +81,13 @@
   const SUPABASE_URL = "https://hyovvejtvzptzskxbkrr.supabase.co";
   const SUPABASE_KEY = "sb_publishable_a0xRmApdgaH-KzxS2gh4KQ_wl1obK0z";
   const WHATSAPP_NUMBER = "5516999957070";
-  const demo = [
-    {id:"demo-1",name:"Bolsa Aurora",category:"Bolsas",price:89.9,status:"available",description:"Bolsa artesanal com acabamento cuidadoso, ideal para acompanhar a rotina.",image_url:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=85"},
-    {id:"demo-2",name:"Nécessaire Flora",category:"Nécessaires",price:39.9,status:"made_to_order",description:"Nécessaire prática para organizar pequenos objetos e acessórios.",image_url:"https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=85"},
-    {id:"demo-3",name:"Bolsa Terra",category:"Bolsas",price:99.9,status:"available",description:"Uma bolsa versátil para quem gosta de peças com personalidade.",image_url:"https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=85"}
-  ];
   const search = document.getElementById("search");
   const categories = document.getElementById("categories");
   const empty = document.getElementById("empty");
   const status = document.getElementById("collectionStatus");
   const dialog = document.getElementById("product-dialog");
   const dialogContent = document.getElementById("dialog-content");
-  let products = [...demo], selected = "Todos", activeProduct = null, imageIndex = 0;
+  let products = [], selected = "Todos", activeProduct = null, imageIndex = 0, loadError = false;
   const labels = {available:"Disponível",made_to_order:"Sob encomenda",sold_out:"Esgotado"};
   const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const money = value => Number(value || 0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
@@ -115,9 +110,9 @@
         <div class="product-image"><img src="${esc(productImages(p)[0]||"")}" alt="${esc(p.name)}" loading="lazy"><span class="product-status">${esc(labels[p.status]||"Consulte")}</span></div>
         <div class="product-info"><p>${esc(p.category||"Artesanal")}</p><h3>${esc(p.name)}</h3><span class="product-price">${money(p.price)}</span></div>
       </article>`).join("");
-    if (empty) empty.hidden = filtered.length > 0;
+    if (empty) {\n      empty.hidden = filtered.length > 0;\n      if (!filtered.length) empty.textContent = loadError\n        ? "Não foi possível carregar a coleção agora. Verifique sua conexão e tente novamente mais tarde."\n        : products.length === 0\n          ? "Ainda não há peças cadastradas na coleção. Volte em breve para conferir as novidades."\n          : "Nenhum produto encontrado. Tente outra busca." ;\n    }
     grid.querySelectorAll(".reveal").forEach((el,i)=>{ el.style.transitionDelay=`${(i%3)*60}ms`; requestAnimationFrame(()=>el.classList.add("is-visible")); });
-    if (status) status.textContent = `${filtered.length} peça(s) encontrada(s)${products===demo?" · conteúdo demonstrativo":""}`;
+    if (status) status.textContent = loadError\n      ? "Catálogo temporariamente indisponível."\n      : `${filtered.length} peça(s) encontrada(s)`;
   }
   function openProduct(product) {
     activeProduct = product; imageIndex = 0;
