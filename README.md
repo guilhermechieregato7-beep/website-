@@ -164,8 +164,8 @@ O projeto de teste tem uma Edge Function (`superadmin-control`) que centraliza a
 
 ## Pendências e próximos passos
 
-- [ ] Adicionar a foto de capa `og-image.jpg`.
-- [ ] Cadastrar os produtos reais (hoje o banco está vazio e a vitrine mostra demonstração).
+- [ ] Substituir a imagem externa de prévia social por uma capa própria (1200×630 px).
+- [ ] Cadastrar os produtos reais no painel Admin; sem produtos cadastrados, a vitrine informa que a coleção está vazia.
 - [ ] Gravar os eventos em `activity_logs` para a auditoria ter conteúdo (já implementado no ambiente de testes, ainda não promovido à produção).
 - [ ] Liberar no superadmin de produção a gestão de perfis e funções (já implementado no ambiente de testes, ainda não promovido à produção).
 - [ ] Ativar a proteção contra senha vazada no painel do Supabase (Authentication → Settings → Password Security) — não dá pra fazer isso por SQL.
