@@ -104,7 +104,7 @@ body.drawer-open { overflow:hidden; }
 /* Conteúdo sempre visível: animações nunca podem esconder a página se o JS falhar. */
 .reveal { opacity:1; transform:none; transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1); }
 .reveal.is-visible { opacity:1; transform:none; }
-.text-reveal { clip-path:inset(0 0 100% 0); animation:textReveal .95s cubic-bezier(.2,.7,.2,1) .12s forwards; }
+.text-reveal { clip-path:none; animation:none; }
 @keyframes textReveal { to { clip-path:inset(0 0 0 0); } }
 ::view-transition-old(root) { animation:pageOut .18s ease both; }
 ::view-transition-new(root) { animation:pageIn .38s cubic-bezier(.2,.7,.2,1) both; }
@@ -114,6 +114,30 @@ body.drawer-open { overflow:hidden; }
 :root[data-public-theme="dark"] .destination-card { color:var(--ink); }
 :root[data-public-theme="dark"] .category-button.active,:root[data-public-theme="dark"] .category-button:hover { color:#17151c; }
 :root[data-public-theme="dark"] .button,:root[data-public-theme="dark"] .button:hover { background:var(--clay)!important; border-color:var(--clay)!important; color:#211923!important; }
+/* Ajustes de navegação mobile e menu lateral */
+.menu-backdrop { z-index: 999; }
+.side-drawer { z-index: 1000; overscroll-behavior: contain; }
+.side-drawer a, .side-drawer button { -webkit-tap-highlight-color: transparent; }
+.menu-toggle, .theme-toggle { touch-action: manipulation; }
+@media(max-width:760px) {
+  .site-header { width:100%; }
+  .primary-nav {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    align-items:center;
+    width:100%;
+    gap:8px 10px;
+  }
+  .primary-nav a { line-height:2; }
+  .primary-nav .nav-separator { display:none; }
+  .primary-nav #menuToggle { margin-left:auto; }
+  .side-drawer { width:min(360px,88vw); padding:22px 20px; }
+}
+@media(max-width:360px) {
+  .primary-nav { column-gap:8px; }
+  .primary-nav a { font-size:10px; }
+}
 @media(max-width:760px) {
  .site-header { align-items:flex-start; flex-direction:column; gap:18px; padding:17px 5%; }
  .primary-nav { width:100%; justify-content:space-between; gap:7px; font-size:11px; }
