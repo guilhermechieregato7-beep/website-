@@ -101,8 +101,9 @@ body.drawer-open { overflow:hidden; }
 .contact-mark { flex:none; color:var(--clay); font-family:var(--serif); font-size:clamp(35px,5vw,60px); font-weight:700; line-height:.95; text-align:right; }
 .contact-mark em { font-weight:500; }
 .text-link { display:inline-block; margin-top:18px; padding-bottom:6px; border-bottom:1px solid var(--clay); font-size:13px; }
-.reveal { opacity:0; transform:translateY(22px); transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1); }
-.reveal.is-visible { opacity:1; transform:translateY(0); }
+/* Conteúdo sempre visível: animações nunca podem esconder a página se o JS falhar. */
+.reveal { opacity:1; transform:none; transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1); }
+.reveal.is-visible { opacity:1; transform:none; }
 .text-reveal { clip-path:inset(0 0 100% 0); animation:textReveal .95s cubic-bezier(.2,.7,.2,1) .12s forwards; }
 @keyframes textReveal { to { clip-path:inset(0 0 0 0); } }
 ::view-transition-old(root) { animation:pageOut .18s ease both; }
