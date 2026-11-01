@@ -34,17 +34,30 @@
       if (open) return;
       open = true;
       backdrop.hidden = false;
-      requestAnimationFrame(() => { backdrop.classList.add("is-visible"); drawer.classList.add("is-open"); });
-      drawer.setAttribute("aria-hidden","false"); drawer.inert = false;
-      toggle.setAttribute("aria-expanded","true"); document.body.classList.add("drawer-open");
-      close.focus();
+      drawer.inert = false;
+      drawer.setAttribute("aria-hidden","false");
+      toggle.setAttribute("aria-expanded","true");
+      document.body.classList.add("drawer-open");
+      // A classe é aplicada no próximo frame para permitir a transição sem atrasar a abertura.
+      requestAnimationFrame(() => {
+        if (!open) return;
+        backdrop.classList.add("is-visible");
+        drawer.classList.add("is-open");
+        close.focus();
+      });
     };
     const closeDrawer = () => {
       if (!open) return;
-      open = false; drawer.classList.remove("is-open"); backdrop.classList.remove("is-visible");
-      drawer.setAttribute("aria-hidden","true"); drawer.inert = true;
-      toggle.setAttribute("aria-expanded","false"); document.body.classList.remove("drawer-open");
-      window.setTimeout(() => { if (!open) backdrop.hidden = true; }, 340);
+      open = false;
+      drawer.classList.remove("is-open");
+      backdrop.classList.remove("is-visible");
+      drawer.setAttribute("aria-hidden","true");
+      drawer.inert = true;
+      toggle.setAttribute("aria-expanded","false");
+      document.body.classList.remove("drawer-open");
+      window.setTimeout(() => {
+        if (!open) backdrop.hidden = true;
+      }, 360);
       toggle.focus();
     };
     toggle.addEventListener("click",openDrawer);
